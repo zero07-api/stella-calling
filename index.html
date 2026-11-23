@@ -374,7 +374,7 @@ const CONFIG = {
   },
 
   callDelaySec: 8,                   // 홈화면에 들어온 뒤 몇 초 후에 전화가 올지
-  callAudio: ["call.mp3","call.m4a","call.wav","call.aac","call.ogg"],  // 전화를 받으면 재생될 소리 파일 (순서대로 찾아서 있는 것을 재생)
+  callAudio: ["call.m4a"],  // 전화를 받으면 재생될 소리 파일 (순서대로 찾아서 있는 것을 재생)
   ringtone: "",                      // 벨소리 mp3 (없으면 "" 그대로 두기)
 
   weather: { city: "서울", temp: "18°", cond: "대체로 맑음", range: "최고 22° 최저 12°" },
@@ -419,6 +419,8 @@ const CONFIG = {
 const $ = s => document.querySelector(s), $$ = s => document.querySelectorAll(s);
 const C = CONFIG, phone = $("#phone");
 let scale = 1, started = false, audio, ring, tick, pin = "";
+const callFiles = [].concat(C.callAudio).filter(Boolean);
+let retryCallAudio;
 
 /* 화면 크기에 맞게 확대/축소 */
 function fit(){
@@ -443,9 +445,64 @@ $$(".cn").forEach(e => e.textContent = C.callerName);
 $("#wc").textContent = C.weather.city; $("#wt").textContent = C.weather.temp;
 $("#wd").innerHTML = C.weather.cond + "<br>" + C.weather.range;
 
+const pictureUrls = new Map();
+
+async function decodePicture(src){
+  const image = new Image();
+  image.src = src;
+  await image.decode();
+  return src;
+}
+
+async function loadPicture(path){
+  const url = new URL(path, document.baseURI);
+  if (url.origin !== location.origin || !["http:", "https:"].includes(url.protocol)){
+    return decodePicture(url.href);
+  }
+  for (let attempt = 0; ; attempt++){
+    try {
+      const response = await fetch(url, {cache: attempt ? "reload" : "default"});
+      if (!response.ok) throw new Error("Image request failed: " + response.status);
+      const bytes = await response.arrayBuffer();
+      // JPEG decoders can render partial rows even when the end marker is missing.
+      if (/\.jpe?g$/i.test(url.pathname) &&
+          (bytes.byteLength < 4 || new DataView(bytes).getUint16(bytes.byteLength - 2) !== 0xffd9)){
+        throw new Error("Incomplete JPEG");
+      }
+      const src = URL.createObjectURL(new Blob([bytes], {type: response.headers.get("Content-Type") || ""}));
+      try {
+        return await decodePicture(src);
+      } catch (error) {
+        URL.revokeObjectURL(src);
+        throw error;
+      }
+    } catch (error) {
+      if (attempt === 2) throw error;
+      await new Promise(resolve => setTimeout(resolve, 350 * (attempt + 1)));
+    }
+  }
+}
+
+function withPicture(path, render){
+  if (!path) return;
+  if (!pictureUrls.has(path)){
+    pictureUrls.set(path, loadPicture(path).catch(error => {
+      pictureUrls.delete(path);
+      throw error;
+    }));
+  }
+  pictureUrls.get(path).then(render).catch(() => {});
+}
+
 const grad = "linear-gradient(160deg,#6d8fb5,#c9a9c4)";
-$("#lock .wp").style.backgroundImage = `url("${C.lockWallpaper}"),${grad}`;
-$$("#passcode .wp,#home .wp,.call .wp").forEach(e => e.style.backgroundImage = `url("${C.homeWallpaper}"),${grad}`);
+function setWallpaper(elements, path){
+  elements.forEach(e => { e.style.backgroundImage = grad; });
+  withPicture(path, src => {
+    elements.forEach(e => { e.style.backgroundImage = 'url("' + src + '"),' + grad; });
+  });
+}
+setWallpaper([$("#lock .wp")], C.lockWallpaper);
+setWallpaper($$("#passcode .wp,#home .wp,.call .wp"), C.homeWallpaper);
 
 /* 메시지 앱 */
 const M = C.sms, mLast = M.messages[M.messages.length-1];
@@ -462,7 +519,14 @@ const mEls = $("#smsgs").querySelectorAll(".sdt,.sb");
 mItems.forEach((m,i) => mEls[i].textContent = m.date || m.text);
 $("#srow").onclick = () => { show("msgroom"); $("#smsgs").scrollTop = $("#smsgs").scrollHeight; };
 $("#sback").onclick = () => show("home");
-$("#plist").innerHTML = C.photos.map(p => `<div style="background-image:url('${p}')"></div>`).join("");
+$("#plist").innerHTML = C.photos.map(() => "<div></div>").join("");
+const photoTiles = $$("#plist > div");
+
+function loadPhotos(){
+  C.photos.forEach((path, i) => withPicture(path, src => {
+    photoTiles[i].style.backgroundImage = 'url("' + src + '")';
+  }));
+}
 
 /* 앱 아이콘 (iOS 스타일 그림) */
 const g = (id,a,b) => `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs>`;
@@ -509,7 +573,13 @@ $$("#nlist .nrow").forEach(r => {
 /* 카카오톡 */
 const K = C.kakao, kLast = K.messages[K.messages.length-1];
 const noAv = `<svg viewBox="0 0 44 44"><rect width="44" height="44" fill="#d8dbe0"/><circle cx="22" cy="17" r="8" fill="#fff"/><path d="M6 44c0-10 7-15 16-15s16 5 16 15z" fill="#fff"/></svg>`;
-function setAv(el){ el.innerHTML = noAv; const im = new Image(); im.onload = () => { el.innerHTML = ""; el.style.backgroundImage = `url("${K.avatar}")`; }; im.src = K.avatar; }
+function setAv(el){
+  el.innerHTML = noAv;
+  withPicture(K.avatar, src => {
+    el.innerHTML = "";
+    el.style.backgroundImage = 'url("' + src + '")';
+  });
+}
 $("#kname").textContent = K.name; $("#krname").textContent = K.name;
 $("#kprev").textContent = kLast.text; $("#kdate").textContent = K.listDate; $("#krdate").textContent = K.roomDate;
 $$(".kk .ub").forEach(u => { if (!K.unread) u.style.display = "none"; else if (u.textContent === "2") u.textContent = K.unread; });
@@ -525,7 +595,10 @@ $("#krow").onclick = () => { $$(".kk .ub").forEach(u => u.style.display = "none"
 $("#kback").onclick = () => show("home");
 
 /* 화면 전환 */
-function show(id){ $$(".screen").forEach(s => s.classList.toggle("on", s.id === id)); }
+function show(id){
+  $$(".screen").forEach(s => s.classList.toggle("on", s.id === id));
+  if (id === "photos") loadPhotos();
+}
 function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("on"); setTimeout(()=>t.classList.remove("on"),1500); }
 
 $$("[data-go]").forEach(b => b.onclick = () => show(b.dataset.go));
@@ -609,6 +682,11 @@ $("#pcancel").onclick = () => { if (pin){ pin = pin.slice(0,-1); updDots(); } el
 /* 전화 */
 function startCallTimer(){
   if (started) return; started = true;
+  if (callFiles.length){
+    audio = new Audio();
+    audio.preload = "auto";
+    audio.src = callFiles[0];
+  }
   setTimeout(() => {
     show("incoming");
     if (navigator.vibrate) navigator.vibrate([400,200,400,200,400]);
@@ -618,19 +696,52 @@ function startCallTimer(){
 function stopRing(){ if (ring){ ring.pause(); ring = null; } }
 function endCall(){
   clearInterval(tick); stopRing();
-  if (audio){ audio.pause(); audio = null; }
+  retryCallAudio = null;
+  if (audio){
+    const finished = audio;
+    audio = null;
+    finished.pause();
+    finished.removeAttribute("src");
+    finished.load();
+  }
   show("home");
 }
 $("#decline").onclick = endCall;
 $("#hang").onclick = endCall;
-function playCallAudio(i){
-  const list = [].concat(C.callAudio);
-  if (i >= list.length){ toast("소리 파일을 찾을 수 없어요 (call.mp3 / call.m4a)"); return; }
-  const a = new Audio(list[i]); audio = a;
-  a.onerror = () => { if (audio === a) playCallAudio(i+1); };
-  a.onended = endCall;
-  a.play().catch(err => { if (err && err.name === "NotAllowedError") toast("화면을 한 번 터치한 뒤 다시 시도해 주세요"); else if (audio === a) playCallAudio(i+1); });
+function promptCallRetry(retry){
+  retryCallAudio = retry;
+  toast("화면을 한 번 터치한 뒤 다시 시도해 주세요");
 }
+
+function playCallAudio(i, reload = false){
+  const src = callFiles[i];
+  if (!src){ toast("소리 파일을 찾을 수 없어요 (call.mp3 / call.m4a)"); return; }
+  const player = i === 0 && audio && !reload ? audio : new Audio(src);
+  audio = player;
+  retryCallAudio = null;
+  const onError = () => {
+    if (audio !== player) return;
+    if (i + 1 < callFiles.length) playCallAudio(i + 1);
+    else promptCallRetry(() => playCallAudio(i, true));
+  };
+  player.onerror = onError;
+  player.onended = endCall;
+
+  const play = () => {
+    player.play().catch(error => {
+      if (audio !== player) return;
+      if (error?.name === "NotAllowedError") promptCallRetry(play);
+      else onError();
+    });
+  };
+  play();
+}
+
+$("#incall").addEventListener("click", () => {
+  const retry = retryCallAudio;
+  retryCallAudio = null;
+  retry?.();
+});
 $("#accept").onclick = () => {
   stopRing(); show("incall");
   playCallAudio(0);
