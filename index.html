@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>지우의 iPhone</title>
+<title>스텔라의 iPhone</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;background:#0e0f12;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif}
@@ -293,7 +293,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
     <div class="status" style="color:#000"><span class="t"></span><span class="r">SKT <span class="bat bt" style="background:#000;color:#fff"></span></span></div>
     <div class="kt">채팅</div>
     <div class="kic"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/></svg><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5l1.8 2.3 2.9-.6.9 2.8 2.7 1.2-.7 2.9 1.9 2.3-1.9 2.3.7 2.9-2.7 1.2-.9 2.8-2.9-.6L12 21.5l-1.8-2.3-2.9.6-.9-2.8-2.7-1.2.7-2.9L2.5 12l1.9-2.3-.7-2.9 2.7-1.2.9-2.8 2.9.6z"/></svg></div>
-    <div class="kchips"><div class="chip on">전체</div><div class="chip">안읽음 <i class="ub">2</i></div><div class="chip">ChatGPT</div><div class="chip">통화</div><div class="chip"><svg viewBox="0 0 24 24"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></div></div>
+    <div class="kchips"><div class="chip on">전체</div><div class="chip">안읽음 <i class="ub">2</i></div><div class="chip">텔냥이</div><div class="chip">통화</div><div class="chip"><svg viewBox="0 0 24 24"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></div></div>
     <button class="krow" id="krow"><span class="av kav"></span><div class="m"><b><span id="kname"></span><svg viewBox="0 0 24 24"><path d="M9 3h6l-1 6 3 3H7l3-3zM12 12v9"/></svg></b><span id="kprev"></span></div><div class="r"><span id="kdate"></span><i class="ub">2</i></div></button>
     <div class="kbar"><div><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4.2"/><path d="M4 21c0-4.6 3.6-7 8-7s8 2.4 8 7z"/></svg></div><div class="on"><svg viewBox="0 0 24 24"><path d="M12 3C6.5 3 2.5 6.6 2.5 11c0 2.8 1.6 5.2 4.1 6.6L5.500 21.500l4.300-2.500c.7.1 1.500.2 2.200.2 5.500 0 9.500-3.600 9.500-8.100S17.500 3 12 3z"/></svg><i class="ub">2</i></div><div><svg viewBox="0 0 24 24" style="fill:none;stroke:#b9b9b9;stroke-width:1.8;stroke-linejoin:round"><path d="M3 4h12v9H8l-3 3v-3H3zM17 9h4v9h-2v3l-3-3h-5v-2"/></svg></div><div><svg viewBox="0 0 24 24"><path d="M5 3h14l2 4v13a1 1 0 01-1 1H4a1 1 0 01-1-1V7z"/></svg></div><div><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></div></div>
     <div class="hbar" style="background:#000"></div>
@@ -343,8 +343,8 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
    여기만 고치면 돼요! (따옴표 "" 안의 글자만 바꾸세요)
    ============================================================ */
 const CONFIG = {
-  ownerName: "지우",                 // 폰 주인 이름
-  callerName: "지우",                // 걸려오는 전화 발신자 이름
+  ownerName: "스텔라",                 // 폰 주인 이름
+  callerName: "스텔라",                // 걸려오는 전화 발신자 이름
   time: "",                          // 표시할 시간 ("" 로 두면 접속한 실제 시간)
   date: "10월 17일 (토)",            // 표시할 날짜 ("" 로 두면 실제 오늘 날짜)
   battery: 97,                       // 배터리 %
@@ -352,22 +352,22 @@ const CONFIG = {
   lockWallpaper: "background.jpg",   // 잠금화면 배경 사진 파일 이름
   homeWallpaper: "background.jpg",   // 홈화면 배경 사진 파일 이름
 
-  passcode: "0907",                  // 잠금 해제 암호 (숫자 4자리)
+  passcode: "0618",                  // 잠금 해제 암호 (숫자 4자리)
 
   // 메시지 앱 (아이폰 기본 문자)
   sms: {
-    name: "지우",
+    name: "스텔라",
     listDay: "수요일",                 // 목록에 보이는 날짜/요일
     roomDate: "10월 21일 (수) 오후 12:10", // 대화 맨 위 첫 날짜 (messages 첫 줄에 date를 직접 쓰면 무시돼요)
     read: true,                        // 내 마지막 말풍선 아래 "읽음" 표시
     messages: [                        // from: "me"=나(파란색), "them"=상대(회색)
-      { from: "me",   text: "지우야 힘이 나는 말 좀 해줘" },
-      { from: "them", text: "운이 좋은 시기가 또 올 거얌" },
-      { from: "them", text: "🍀🍀🍀" },
+      { from: "me",   text: "스텔라야, 노래 한 소절만 불러줘" },
+      { from: "them", text: "힘들 땐 노래가 최고예요" },
+      { from: "them", text: "🎵🎵🎵" },
        { date: "10월 25일 (일) 오전 1:57" },
-       { from: "them", text: "저는 운동 다녀와서" },
-       { from: "them", text: "딱 얼음컵에" },
-       { from: "them", text: "칠성사이다 리치 마샸습니다ㅋ" },
+       { from: "them", text: "기타 연습 끝내고" },
+       { from: "them", text: "따뜻한 우유 한 잔 마시고" },
+       { from: "them", text: "이제 잘 거예요 🌙" },
       // 날짜를 중간에 넣으려면 아래처럼 한 줄 추가 (앞 줄 끝에 쉼표 필요)
       // { date: "10월 22일 (목) 오전 9:30" },
     ]
@@ -381,15 +381,15 @@ const CONFIG = {
 
   // 메모 앱: 제목, 날짜, 내용 (내용 줄바꿈은 \n)
   notes: [
-    { title: "운동도 다녀왔구😎", date: "2026. 10. 25.", body: "운동도 다녀왔구😎\n씻구 짐 정리하고\n누웠다아\n한다면 하는 요자\n😎😎" },
-    { title: "새로운 메모", date: "2026. 10. 13.", body: "아니 최근에 딥디크 가서 시향 하는데 플레르드뽀가 너무 좋더라\n분명 예전에 샀었는데 잃어버려서 다시 살까 진짜 그 자리에서 백 번 고민함" },
-    { title: "메모",        date: "2026. 10. 7.",  body: "나 새나라의 어린이가 된 기분이야\n어제 10시에 자고 오늘 6시에 일어났어" }
+    { title: "기타 연습 끝 🎸", date: "2026. 10. 25.", body: "오늘 기타 연습 끝 🎸 손가락은 아프지만 새로 익힌 코드 진행이 너무 예쁘다" },
+    { title: "요즘 무한 반복 중 🎧", date: "2026. 10. 13.", body: "Mitski - My Love Mine All Mine\n비 오는 날 듣기 딱 좋다\n기타로 쳐보고 싶어" },
+    { title: "일찍 잘래요",        date: "2026. 10. 7.",  body: "내일 목 상태 좋아야 하니까 오늘은 일찍 잘래요 🌙" }
     
   ],
 
   // 카카오톡 (프로필 사진은 같은 폴더에 profile.jpg 로 올리면 보여요. 없으면 기본 그림)
   kakao: {
-    name: "지우",
+    name: "스텔라",
     avatar: "profile.jpg",
     listDate: "10월 6일",            // 채팅 목록에 보이는 날짜
     roomDate: "2026년 10월 6일 화요일", // 채팅방 위쪽 날짜
@@ -397,8 +397,8 @@ const CONFIG = {
     unread: 2,                       // 안 읽은 메시지 숫자 (0 이면 숨김)
     messages: [                      // from: "them"=상대, "me"=나(노란색)
       { from: "them", text: "좋은 아침~" },
-      { from: "them", text: "일어난 하츄들 부지런하다" },
-      { from: "them", text: "오늘 하루도 힘내애" }
+      { from: "them", text: "오늘도 노래하면서 시작해요" },
+      { from: "them", text: "하츄들 오늘 하루도 파이팅 🎤" }
     ]
   },
 
@@ -530,6 +530,57 @@ function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("on
 
 $$("[data-go]").forEach(b => b.onclick = () => show(b.dataset.go));
 $$(".app").forEach(b => b.onclick = () => b.dataset.app ? show(b.dataset.app) : toast(b.dataset.name + " 앱은 준비 중이에요"));
+
+/* 앱에서 오른쪽으로 밀어 홈으로 돌아가기 */
+const swipeAppScreen = ".screen.on:not(#lock):not(#passcode):not(#home):not(#incoming):not(#incall)";
+let appSwipe = null;
+let swipedScreen = null;
+
+function startAppSwipe(target, point, input){
+  const screen = target.closest(swipeAppScreen);
+  appSwipe = screen && point ? { screen, input, x: point.clientX, y: point.clientY } : null;
+}
+
+function finishAppSwipe(point, input){
+  if (appSwipe?.input !== input) return;
+  const { screen, x, y } = appSwipe;
+  appSwipe = null;
+  if (!point || !screen.classList.contains("on")) return;
+  if (point.clientX - x > 60 && Math.abs(point.clientY - y) < 40){
+    swipedScreen = screen;
+    show("home");
+  }
+}
+
+phone.addEventListener("touchstart", e => {
+  startAppSwipe(e.target, e.touches.length === 1 ? e.touches[0] : null, "touch");
+}, { passive: true });
+phone.addEventListener("scroll", e => {
+  if (appSwipe?.screen.contains(e.target)) appSwipe = null;
+}, { capture: true, passive: true });
+phone.addEventListener("touchend", e => {
+  const point = e.touches.length === 0 && e.changedTouches.length === 1 ? e.changedTouches[0] : null;
+  finishAppSwipe(point, "touch");
+}, { passive: true });
+phone.addEventListener("touchcancel", () => {
+  if (appSwipe?.input === "touch") appSwipe = null;
+}, { passive: true });
+
+phone.addEventListener("mousedown", e => {
+  if (e.button === 0) startAppSwipe(e.target, e, "mouse");
+});
+window.addEventListener("mouseup", e => {
+  if (e.button === 0) finishAppSwipe(e, "mouse");
+});
+
+// 드래그 끝에 발생하는 클릭으로 닫힌 앱의 버튼이 실행되는 것을 막음
+phone.addEventListener("click", e => {
+  if (swipedScreen?.contains(e.target) && !swipedScreen.classList.contains("on")){
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  swipedScreen = null;
+}, true);
 
 /* 잠금 해제: 화면 아무 곳이나 탭하거나 스와이프 */
 function unlock(){ pin = ""; updDots(); show("passcode"); }
